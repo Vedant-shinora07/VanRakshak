@@ -46,7 +46,8 @@ export default function HarvesterDashboard() {
         reset();
         loadBatches();
       } catch (e) {
-        alert(t('common.error'));
+        alert(t('common.error') + ': ' + (e.response?.data?.error || e.response?.data?.errors?.[0]?.msg || e.message));
+        console.error(e.response || e);
       }
     }
   };

@@ -21,7 +21,7 @@ export const createHarvestEntry = async (data) => {
 };
 export const getMyBatches = async () => {
   const res = await axiosInstance.get('/harvest/my-batches');
-  return res.data;
+  return res.data.batches;
 };
 export const syncOffline = async () => {
   const res = await axiosInstance.post('/harvest/sync');
@@ -39,7 +39,7 @@ export const dispatchShipment = async (data) => {
 };
 export const getDepotFlags = async () => {
   const res = await axiosInstance.get('/depot/flags');
-  return res.data;
+  return res.data.flags;
 };
 
 // Trader
@@ -53,7 +53,7 @@ export const deliverBatch = async (data) => {
 };
 export const getTraderBatches = async () => {
   const res = await axiosInstance.get('/trader/batches');
-  return res.data;
+  return res.data.batches;
 };
 
 // Public
@@ -77,7 +77,7 @@ export const getPermitAudit = async (permitNumber) => {
 // Admin
 export const getUsers = async () => {
   const res = await axiosInstance.get('/admin/users');
-  return res.data;
+  return res.data.users;
 };
 export const createUser = async (data) => {
   const res = await axiosInstance.post('/auth/register', data);
@@ -89,7 +89,7 @@ export const createPermit = async (data) => {
 };
 export const getAdminFlags = async () => {
   const res = await axiosInstance.get('/admin/flags');
-  return res.data;
+  return res.data.flags;
 };
 export const getAdminAudit = async (permitNumber) => {
   const res = await axiosInstance.get(`/admin/audit?permitNumber=${permitNumber}`);

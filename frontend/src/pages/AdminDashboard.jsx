@@ -23,15 +23,15 @@ export default function AdminDashboard() {
   useEffect(() => { loadData(); }, [tab]);
 
   const onAddUser = async (d) => {
-    try { await createUser({...d, secretCode: 'ADMIN_SECRET_HACKATHON'}); userForm.reset(); loadData(); } catch (e) { alert(t('common.error')); }
+    try { await createUser({...d, secretCode: 'ADMIN_SECRET_HACKATHON'}); userForm.reset(); loadData(); } catch (e) { alert(t('common.error') + ': ' + (e.response?.data?.error || e.response?.data?.errors?.[0]?.msg || e.message)); }
   };
 
   const onRegisterPermit = async (d) => {
-    try { await createPermit(d); permitForm.reset(); alert('Permit created'); } catch (e) { alert(t('common.error')); }
+    try { await createPermit(d); permitForm.reset(); alert('Permit created'); } catch (e) { alert(t('common.error') + ': ' + (e.response?.data?.error || e.response?.data?.errors?.[0]?.msg || e.message)); }
   };
 
   const runAudit = async () => {
-    try { setAuditData(await getAdminAudit(auditPermit)); } catch (e) { alert(t('common.error')); }
+    try { setAuditData(await getAdminAudit(auditPermit)); } catch (e) { alert(t('common.error') + ': ' + (e.response?.data?.error || e.response?.data?.errors?.[0]?.msg || e.message)); }
   };
 
   const getRoleColor = (role) => {
@@ -254,9 +254,9 @@ export default function AdminDashboard() {
                     {data.map((f, i) => (
                       <tr key={f.id} className={i % 2 === 0 ? 'bg-white' : 'bg-[#F1EFE8]'}>
                         <td className="px-6 py-4 text-[13px] text-[#444441] font-mono truncate max-w-[200px]">{f.batch_id}</td>
-                        <td className="px-6 py-4 text-[13px] text-[#444441] font-medium">{f.depot_manager_name}</td>
-                        <td className="px-6 py-4 text-[13px] text-[#444441] font-semibold text-right">{f.received_kg}</td>
-                        <td className="px-6 py-4 text-[13px] text-[#A32D2D] font-bold text-right">{f.dispatched_kg}</td>
+                        <td className="px-6 py-4 text-[13px] text-[#444441] font-medium">{f.flagged_by_name}</td>
+                        <td className="px-6 py-4 text-[13px] text-[#444441] font-semibold text-right">{f.total_received_kg}</td>
+                        <td className="px-6 py-4 text-[13px] text-[#A32D2D] font-bold text-right">{f.total_dispatched_kg}</td>
                         <td className="px-6 py-4 text-center">
                           {f.status === 'open' ? (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FDF5F5] text-[#A32D2D] text-[11px] font-bold uppercase tracking-wider rounded-full border border-[#FAD6D6]">
@@ -314,42 +314,48 @@ export default function AdminDashboard() {
                   </div>
 
                   {/* Batch Audit Cards */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {auditData.batches.map(b => (
-                      <div
-                        key={b.batchId}
-                        className={`rounded-xl border p-5 ${
-                          b.isValid
-                            ? 'bg-[#E1F5EE] border-[#1D9E75]/30'
-                            : 'bg-[#FDF5F5] border-[#A32D2D]/30'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <span className="font-mono text-[12px] text-[#5F5E5A]">{b.batchId}</span>
-                          {b.isValid ? (
-                            <span className="bg-[#1D9E75] text-white text-[11px] px-2.5 py-0.5 rounded-full font-mono">✓ Valid</span>
-                          ) : (
-                            <span className="bg-[#A32D2D] text-white text-[11px] px-2.5 py-0.5 rounded-full font-mono">✗ Tampered</span>
-                          )}
+                  {auditData.batches.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {auditData.batches.map(b => (
+                        <div
+                          key={b.batchId}
+                          className={`rounded-xl border p-5 ${
+                            b.isValid
+                              ? 'bg-[#E1F5EE] border-[#1D9E75]/30'
+                              : 'bg-[#FDF5F5] border-[#A32D2D]/30'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <span className="font-mono text-[12px] text-[#5F5E5A]">{b.batchId}</span>
+                            {b.isValid ? (
+                              <span className="bg-[#1D9E75] text-white text-[11px] px-2.5 py-0.5 rounded-full font-mono">✓ Valid</span>
+                            ) : (
+                              <span className="bg-[#A32D2D] text-white text-[11px] px-2.5 py-0.5 rounded-full font-mono">✗ Tampered</span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {b.isValid ? (
+                              <svg className="w-5 h-5 text-[#1D9E75]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                              </svg>
+                            ) : (
+                              <svg className="w-5 h-5 text-[#A32D2D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                              </svg>
+                            )}
+                            <span className={`text-[14px] font-semibold ${b.isValid ? 'text-[#085041]' : 'text-[#A32D2D]'}`}>
+                              {b.isValid ? 'Chain Valid' : 'Chain Tampered'}
+                            </span>
+                            <span className="text-[12px] text-[#888780] ml-auto">{b.totalBlocks} blocks</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {b.isValid ? (
-                            <svg className="w-5 h-5 text-[#1D9E75]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                          ) : (
-                            <svg className="w-5 h-5 text-[#A32D2D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                          )}
-                          <span className={`text-[14px] font-semibold ${b.isValid ? 'text-[#085041]' : 'text-[#A32D2D]'}`}>
-                            {b.isValid ? 'Chain Valid' : 'Chain Tampered'}
-                          </span>
-                          <span className="text-[12px] text-[#888780] ml-auto">{b.totalBlocks} blocks</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center text-[#888780] bg-[#F1EFE8] rounded-xl border border-[#D3D1C7]">
+                      No batches have been registered for this permit yet.
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -32,7 +32,10 @@ export default function DepotDashboard() {
       await receiveShipment(data);
       alert('Received');
       receiveForm.reset();
-    } catch (e) { alert(t('common.error')); }
+    } catch (e) {
+      alert(t('common.error') + ': ' + (e.response?.data?.error || e.response?.data?.errors?.[0]?.msg || e.message));
+      console.error(e.response || e);
+    }
   };
 
   const onDispatch = async (data) => {
@@ -43,10 +46,11 @@ export default function DepotDashboard() {
       setAnomaly(null);
     } catch (e) {
       if (e.response?.status === 409) {
-        setAnomaly(e.response.data.details);
+        setAnomaly(e.response.data);
         setPendingDispatchData(data);
       } else {
-        alert(t('common.error'));
+        alert(t('common.error') + ': ' + (e.response?.data?.error || e.response?.data?.errors?.[0]?.msg || e.message));
+        console.error(e.response || e);
       }
     }
   };
@@ -58,7 +62,10 @@ export default function DepotDashboard() {
       dispatchForm.reset();
       setAnomaly(null);
       setShowConfirm(false);
-    } catch (e) { alert(t('common.error')); }
+    } catch (e) {
+      alert(t('common.error') + ': ' + (e.response?.data?.error || e.response?.data?.errors?.[0]?.msg || e.message));
+      console.error(e.response || e);
+    }
   };
 
   return (
@@ -191,9 +198,9 @@ export default function DepotDashboard() {
                     {flags.map((f, i) => (
                       <tr key={f.id} className={i % 2 === 0 ? 'bg-white' : 'bg-[#F1EFE8]'}>
                         <td className="px-6 py-4 text-[13px] text-[#444441] font-mono truncate max-w-[200px]">{f.batch_id}</td>
-                        <td className="px-6 py-4 text-[13px] text-[#444441] font-semibold text-right">{f.received_kg}</td>
-                        <td className="px-6 py-4 text-[13px] text-[#A32D2D] font-bold text-right">{f.dispatched_kg}</td>
-                        <td className="px-6 py-4 text-[13px] text-[#888780] pl-8">{new Date(f.flagged_at).toLocaleString()}</td>
+                        <td className="px-6 py-4 text-[13px] text-[#444441] font-semibold text-right">{f.total_received_kg}</td>
+                        <td className="px-6 py-4 text-[13px] text-[#A32D2D] font-bold text-right">{f.total_dispatched_kg}</td>
+                        <td className="px-6 py-4 text-[13px] text-[#888780] pl-8">{new Date(f.created_at).toLocaleString()}</td>
                         <td className="px-6 py-4 text-center">
                           {f.status === 'open' ? (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FDF5F5] text-[#A32D2D] text-[11px] font-bold uppercase tracking-wider rounded-full border border-[#FAD6D6]">
