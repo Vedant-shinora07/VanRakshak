@@ -1,0 +1,159 @@
+{
+  "info": {
+    "name": "VanRakshak API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"9000000002\",\n  \"pin\": \"1234\"\n}" },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"9000000007\",\n  \"pin\": \"1234\",\n  \"role\": \"harvester\",\n  \"name\": \"New Guy\",\n  \"secretCode\": \"ADMIN_SECRET_HACKATHON\"\n}" },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Harvest",
+      "item": [
+        {
+          "name": "Create Entry",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"permitNumber\": \"PERMIT-GJ-2024-001\",\n  \"productType\": \"tendu_leaves\",\n  \"quantityKg\": 100,\n  \"gpsLat\": 23.0225,\n  \"gpsLng\": 72.5714,\n  \"harvestDate\": \"2024-03-10\"\n}" },
+            "url": { "raw": "{{baseUrl}}/harvest/entry", "host": ["{{baseUrl}}"], "path": ["harvest", "entry"] }
+          }
+        },
+        {
+          "name": "My Batches",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/harvest/my-batches", "host": ["{{baseUrl}}"], "path": ["harvest", "my-batches"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Depot",
+      "item": [
+        {
+          "name": "Receive",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"batchId\": \"YOUR_BATCH_ID_HERE\",\n  \"quantityKg\": 100,\n  \"location\": \"Depot 1\"\n}" },
+            "url": { "raw": "{{baseUrl}}/depot/receive", "host": ["{{baseUrl}}"], "path": ["depot", "receive"] }
+          }
+        },
+        {
+          "name": "Dispatch",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"batchId\": \"YOUR_BATCH_ID_HERE\",\n  \"quantityKg\": 100,\n  \"location\": \"Depot 1\",\n  \"force\": false\n}" },
+            "url": { "raw": "{{baseUrl}}/depot/dispatch", "host": ["{{baseUrl}}"], "path": ["depot", "dispatch"] }
+          }
+        },
+        {
+          "name": "Flags",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/depot/flags", "host": ["{{baseUrl}}"], "path": ["depot", "flags"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trader",
+      "item": [
+        {
+          "name": "Transport",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"batchId\": \"YOUR_BATCH_ID_HERE\",\n  \"transportDocHash\": \"DOC123\",\n  \"location\": \"Highway\",\n  \"notes\": \"Safe\"\n}" },
+            "url": { "raw": "{{baseUrl}}/trader/transport", "host": ["{{baseUrl}}"], "path": ["trader", "transport"] }
+          }
+        },
+        {
+          "name": "Deliver",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"batchId\": \"YOUR_BATCH_ID_HERE\",\n  \"location\": \"Destination\"\n}" },
+            "url": { "raw": "{{baseUrl}}/trader/deliver", "host": ["{{baseUrl}}"], "path": ["trader", "deliver"] }
+          }
+        },
+        {
+          "name": "Batches",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/trader/batches", "host": ["{{baseUrl}}"], "path": ["trader", "batches"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Provenance",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/public/batch/YOUR_BATCH_ID_HERE/provenance", "host": ["{{baseUrl}}"], "path": ["public", "batch", "YOUR_BATCH_ID_HERE", "provenance"] }
+          }
+        },
+        {
+          "name": "Verify",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/public/verify/YOUR_BATCH_ID_HERE", "host": ["{{baseUrl}}"], "path": ["public", "verify", "YOUR_BATCH_ID_HERE"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Audit",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/audit?permitNumber=PERMIT-GJ-2024-001", "host": ["{{baseUrl}}"], "path": ["admin", "audit"], "query": [{ "key": "permitNumber", "value": "PERMIT-GJ-2024-001" }] }
+          }
+        }
+      ]
+    }
+  ]
+}
