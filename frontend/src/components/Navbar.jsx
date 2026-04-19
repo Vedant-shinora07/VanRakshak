@@ -20,7 +20,10 @@ export default function Navbar() {
   return (
     <>
       <nav className="bg-white shadow px-4 py-3 flex justify-between items-center">
-        <div className="font-bold text-xl text-gray-800">{t('app.name')}</div>
+        <div className="flex items-center gap-2">
+          <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
+          <div className="font-bold text-xl text-[#085041] tracking-tight">{t('app.name')}</div>
+        </div>
         {user && (
           <div className="flex items-center space-x-4">
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${roleColors[user.role]}`}>
